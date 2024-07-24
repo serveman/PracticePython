@@ -16,4 +16,3 @@ time_exponentiation = end_time - start_time
 
 print('i*i  = %f' % time_multiplication)
 print('i**2 = %f' % time_exponentiation)
-
