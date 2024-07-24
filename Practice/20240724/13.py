@@ -1,7 +1,7 @@
 def solution(a, *args):
     a_list = []
     for arg in args:
-        a_list.append(arg)
+        a_list.append(str(arg))
 
     print(a_list)
     result = a.join(a_list)
