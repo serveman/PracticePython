@@ -16,16 +16,64 @@
 # Alt + Shift + 좌우방향키: 선택영역 확장 / 축소
 # (영역 선택하지 않은 상태) Alt + Shift + 상하방향키: 현재 라인 복제
 
-import re
+import re, time
 
-def sample_regex_with_match(inputPattern, inputString):
-    p = re.compile(inputPattern)
-    m = p.match(inputString)
-    if m:
-        print(f'Match found: "{m.group()} in string "{inputString}" with pattern: "{inputPattern}"')
-    else:
-        print(f'No matched in string "{inputString}" with pattern: "{inputPattern}"')
+class sample_regex:
+    def __init__(self):
+        pass
 
-sample_regex_with_match('[a-z]+', 'python')
-print('-' * 20)
-sample_regex_with_match('[a-z]+', '3 python')
+    def _time_check(func):
+        def wrapper(*args):
+            start = time.time()
+            func(*args)
+            end = time.time()
+            print(f'running time: %.6f' %(end-start))
+            print('-' * 20)
+        return wrapper
+
+    @_time_check
+    def __call__(self, inputPattern, inputString, inputOption):
+        self.inputPattern = inputPattern
+        self.inputString = inputString
+        self.inputOption = inputOption
+        self._processing()
+
+    def _processing(self):
+        self._match_option()
+        self._print_option()
+
+    def _match_option(self):
+        p = re.compile(self.inputPattern)
+        match self.inputOption:
+            case 'search': 
+                self.m = p.search(self.inputString)
+            case 'findall':
+                self.m = p.findall(self.inputString)
+            case 'finditer':
+                self.m = p.finditer(self.inputString)
+            case _:
+                self.m = p.match(self.inputString)
+
+    def _print_option(self):
+        if self.m:
+            match self.inputOption:
+                case 'search' | 'match': 
+                    result = f'start: {self.m.start()} to end: {self.m.end()}, text: {self.m.group()}'
+                case 'findall':
+                    result = '\n' + '\n'.join([f'text: {g}' for g in self.m]) + '\n'
+                case 'finditer':
+                    result = '\n' + '\n'.join([f'start: {g.start()} to end: {g.end()}, text: {g.group()}' for g in self.m]) + '\n'
+                case _:
+                    result = 'not exist option'
+                
+            print(f'{self.inputOption}: "{result}" in string "{self.inputString}" with pattern: "{self.inputPattern}"')
+        else:
+            print(f'Nothing {self.inputOption} in string "{self.inputString}" with pattern: "{self.inputPattern}"')
+
+sr = sample_regex()
+sr('[a-z]+', 'python', 'match')
+sr('[a-z]+', '3 python', 'match')
+sr('[a-z]+', '3 python', 'search')
+sr('[a-z]+', 'life is too short', 'search')
+sr('[a-z]+', 'life is too short', 'findall')
+sr('[a-z]+', 'life is too short', 'finditer')
